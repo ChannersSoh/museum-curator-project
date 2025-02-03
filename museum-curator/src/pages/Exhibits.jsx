@@ -15,9 +15,11 @@ export default function Exhibits() {
   useEffect(() => {
     const fetchExhibits = async () => {
       setLoading(true);
-      setError(null); 
+      setError(null);
       try {
-        const { data } = await axios.get(`${API_URL}?page=${page}&pageSize=${EXHIBITS_PER_PAGE}`);
+        const { data } = await axios.get(
+          `${API_URL}?page=${page}&pageSize=${EXHIBITS_PER_PAGE}`
+        );
         setExhibits(data.exhibits);
       } catch {
         setError("Failed to fetch exhibits");
@@ -25,6 +27,7 @@ export default function Exhibits() {
         setLoading(false);
       }
     };
+
     fetchExhibits();
   }, [page]);
 
@@ -59,6 +62,7 @@ export default function Exhibits() {
         {exhibits.map(({ id, title, creator, imageUrl, description, collection, date }) => (
           <Card
             key={id}
+            id={id}
             title={title}
             creator={creator}
             imageUrl={imageUrl}
@@ -78,17 +82,21 @@ export default function Exhibits() {
           Previous
         </button>
 
-        <span>
-          Page 
+        <div className="flex items-center space-x-2">
+          <span>Page</span>
           <input
             type="number"
             value={inputPage}
             onChange={handlePageInputChange}
             onBlur={handlePageInputSubmit}
-            onKeyPress={(e) => e.key === "Enter" && handlePageInputSubmit()}
-            className="w-16 text-center mx-2 p-2 border border-gray-300 rounded"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handlePageInputSubmit();
+              }
+            }}
+            className="w-16 text-center p-2 border border-gray-300 rounded"
           />
-        </span>
+        </div>
 
         <button
           onClick={() => handlePagination(page + 1)}
