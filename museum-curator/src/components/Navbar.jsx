@@ -8,7 +8,7 @@ function Navbar() {
         <div className="text-2xl font-semibold">Museum Curator</div>
         <div className="space-x-4">
           <Link to="/" className="hover:text-gray-300">Home</Link>
-          <Link to="/about" className="hover:text-gray-300">About</Link>
+          <Link to="/exhibits" className="hover:text-gray-300">Exhibits</Link>
         </div>
       </div>
     </nav>
