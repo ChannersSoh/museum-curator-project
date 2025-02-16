@@ -45,6 +45,7 @@ export default function ExhibitDetails() {
           <p className="text-gray-700"><strong>Collection:</strong> {exhibit.collection}</p>
           <p className="text-gray-700"><strong>Date Created:</strong> {exhibit.date}</p>
           <p className="text-gray-700"><strong>Medium:</strong> {exhibit.medium}</p>
+          <p className="text-gray-700"><strong>Culture:</strong> {exhibit.culture}</p>
           <p className="text-gray-700"><strong>Period:</strong> {exhibit.styleOrPeriod}</p>
           <p className="text-gray-700"><strong>Description:</strong> {exhibit.description || "No description available"}</p>
         </div>

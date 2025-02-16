@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export default function Card({ id, title, creator, imageUrl, description, collection, date }) {
+export default function Card({ id, title, creator, imageUrl, description, collection, culture, date }) {
   return (
     <div className="bg-white shadow-lg rounded-lg overflow-hidden w-80">
       <Link to={`/exhibits/${id}`}>
@@ -15,6 +15,7 @@ export default function Card({ id, title, creator, imageUrl, description, collec
           <p className="text-gray-600">By {creator}</p>
           <p className="text-gray-700 mt-2 text-sm">{description}</p>
           <p className="text-gray-700 text-xs mt-1">{collection}</p>
+          <p className="text-gray-700 text-xs mt-1">{culture}</p>
           <p className="text-gray-700 text-xs mt-1">{date}</p>
         </div>
       </Link>
