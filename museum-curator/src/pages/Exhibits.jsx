@@ -207,17 +207,3 @@ export default function Exhibits() {
     </div>
   );
 }
-
-
-
-<div className="flex items-center space-x-2">
-<span className="text-gray-900 dark:text-gray-100">Page</span>
-<input
-  type="number"
-  value={inputPage}
-  onChange={handlePageInputChange}
-  onBlur={handlePageInputSubmit}
-  onKeyDown={(e) => e.key === "Enter" && handlePageInputSubmit()}
-  className="w-16 text-center p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md"
-/>
-</div>
