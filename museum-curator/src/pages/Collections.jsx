@@ -72,24 +72,24 @@ export default function Collections() {
       </div>
 
       <ul className="space-y-4">
-          {collections.map((collection) => (
+        {collections.map((collection) => (
+          <Link key={collection.id} to={`/collections/${collection.id}`} className="block">
             <li
-              key={collection.id}
-              className="p-4 border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center"
+              className="p-4 border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 
+              rounded-lg shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center 
+              hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
             >
               <div>
-                <Link to={`/collections/${collection.id}`} className="text-blue-500 dark:text-blue-400 underline font-semibold">
-                  {collection.name}
-                </Link>
+                <p className="text-lg font-semibold text-gray-600 dark:text-gray-300">{collection.name}</p>
                 <p className="text-gray-600 dark:text-gray-300">{collection.description}</p>
               </div>
               <span className="mt-2 sm:mt-0 bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full text-sm">
                 {collection.exhibitCount || 0} {collection.exhibitCount === 1 ? "exhibit" : "exhibits"}
               </span>
             </li>
-          ))}
-        </ul>
-
+          </Link>
+        ))}
+      </ul>
     </div>
   );
 }

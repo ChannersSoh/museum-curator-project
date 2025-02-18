@@ -79,7 +79,28 @@ export default function ExhibitDetails() {
     }
   };
 
-  if (loading) return <p className="text-center text-gray-900 dark:text-gray-100">Loading exhibit details...</p>;
+  if (loading) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="animate-pulse">
+          <div className="h-10 w-3/4 bg-gray-300 dark:bg-gray-700 rounded mb-6"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="w-full h-96 bg-gray-300 dark:bg-gray-700 rounded-lg"></div>
+            <div className="space-y-4">
+              <div className="h-6 w-1/2 bg-gray-300 dark:bg-gray-700 rounded"></div>
+              <div className="h-4 w-3/4 bg-gray-300 dark:bg-gray-700 rounded"></div>
+              <div className="h-4 w-2/3 bg-gray-300 dark:bg-gray-700 rounded"></div>
+              <div className="h-4 w-1/3 bg-gray-300 dark:bg-gray-700 rounded"></div>
+              <div className="h-4 w-3/4 bg-gray-300 dark:bg-gray-700 rounded"></div>
+              <div className="h-4 w-2/3 bg-gray-300 dark:bg-gray-700 rounded"></div>
+              <div className="h-4 w-1/3 bg-gray-300 dark:bg-gray-700 rounded"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (error) return <p className="text-center text-red-500 dark:text-red-400">{error}</p>;
 
   return (
@@ -93,7 +114,7 @@ export default function ExhibitDetails() {
           alt={exhibit.title}
           className="w-full h-96 object-cover rounded-lg shadow-md"
         />
-        <div className="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-md">
+        <div>
           <p className="text-gray-900 dark:text-gray-100"><strong>Creator:</strong> {exhibit.creator}</p>
           <p className="text-gray-700 dark:text-gray-300"><strong>Collection:</strong> {exhibit.collection}</p>
           <p className="text-gray-700 dark:text-gray-300"><strong>Date Created:</strong> {exhibit.date}</p>

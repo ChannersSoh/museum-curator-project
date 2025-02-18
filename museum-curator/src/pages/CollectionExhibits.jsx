@@ -36,9 +36,6 @@ export default function CollectionExhibits() {
 
     fetchCollectionExhibits();
   }, [id, token]);
-
-  if (loading) 
-    return <p className="text-center text-gray-900 dark:text-gray-100">Loading exhibits...</p>;
   
   if (error) 
     return <p className="text-center text-red-500 dark:text-red-400">{error}</p>;
@@ -46,7 +43,7 @@ export default function CollectionExhibits() {
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-4xl font-bold mb-6 text-gray-900 dark:text-gray-100 text-center">
-        {collectionName || "Collection"} Exhibits
+        {collectionName}
       </h1>
 
       {exhibits.length === 0 ? (
