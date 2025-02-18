@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ChevronDown, ChevronUp } from "lucide-react"; 
 import Card from "../components/Card";
@@ -15,67 +15,67 @@ export default function Exhibits() {
   const [collection, setCollection] = useState("");
   const [culture, setCulture] = useState("");
   const [medium, setMedium] = useState("");
-  const [filtersVisible, setFiltersVisible] = useState(false);
-  const [totalPages, setTotalPages] = useState(1);
+  const [filtersVisible, setFiltersVisible] = useState(false); 
 
-  // ✅ Ensures fetchExhibits always fetches the latest data
-  const fetchExhibits = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  useEffect(() => {
+    const fetchExhibits = async (pageNum, collectionFilter, cultureFilter, mediumFilter) => {
+      setLoading(true);
+      setError(null);
+      setExhibits([]);
     
-    try {
-      const params = new URLSearchParams();
-      params.append("page", page.toString());
-      params.append("pageSize", EXHIBITS_PER_PAGE.toString());
+      try {
+        const params = new URLSearchParams();
+        params.append("page", pageNum.toString());
+        params.append("pageSize", EXHIBITS_PER_PAGE.toString());
+    
+        if (collectionFilter.trim()) params.append("collection", collectionFilter);
+        if (cultureFilter.trim()) params.append("culture", cultureFilter);
+        if (mediumFilter.trim()) params.append("medium", mediumFilter);
+    
+        const { data } = await axios.get(`${API_URL}?${params.toString()}`);
+        setExhibits(data.exhibits);
+      } catch {
+        setError("Failed to fetch exhibits");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      if (collection.trim()) params.append("collection", collection);
-      if (culture.trim()) params.append("culture", culture);
-      if (medium.trim()) params.append("medium", medium);
-
-      const { data } = await axios.get(`${API_URL}?${params.toString()}`);
-      setExhibits(data.exhibits || []);
-      setTotalPages(Math.ceil(data.totalCount / EXHIBITS_PER_PAGE));
-    } catch {
-      setError("Failed to fetch exhibits");
-    } finally {
-      setLoading(false);
-    }
+    fetchExhibits(page, collection, culture, medium);
   }, [page, collection, culture, medium]);
 
-  // ✅ Ensures exhibits refresh correctly on page/filter change
-  useEffect(() => {
-    fetchExhibits();
-  }, [fetchExhibits]);
-
-  // ✅ Handle pagination properly
   const handlePagination = (newPage) => {
-    if (newPage > 0 && newPage <= totalPages) {
+    if (newPage > 0) {
       setPage(newPage);
       setInputPage(newPage);
     }
   };
 
-  // ✅ Handle manual page input
   const handlePageInputChange = (e) => {
     setInputPage(e.target.value);
   };
 
   const handlePageInputSubmit = () => {
     const pageNum = Number(inputPage);
-    if (pageNum > 0 && pageNum <= totalPages) {
+    if (pageNum > 0) {
       setPage(pageNum);
     } else {
       setInputPage(page);
     }
   };
 
-  // ✅ Reset filters properly
   const handleResetFilters = () => {
     setCollection("");
     setCulture("");
     setMedium("");
     setPage(1);
+    setExhibits([]); 
+    setTimeout(() => {
+      fetchExhibits(1, "", "", "");
+    }, 0);
   };
+  
+  
 
   return (
     <div className="container mx-auto p-6">
@@ -138,12 +138,12 @@ export default function Exhibits() {
           </select>
 
           <div className="col-span-1 sm:col-span-3 flex justify-center">
-            <button
+          <button
               onClick={handleResetFilters}
-              className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
-            >
+              className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition">
               Reset Filters
-            </button>
+          </button>
+
           </div>
         </div>
       )}
@@ -175,11 +175,11 @@ export default function Exhibits() {
             ))}
       </div>
 
-      <div className="flex flex-col sm:flex-row justify-center mt-8 items-center space-y-4 sm:space-y-0">
+      <div className="flex flex-col sm:flex-row justify-between mt-8 items-center space-y-4 sm:space-y-0">
         <button
           onClick={() => handlePagination(page - 1)}
           disabled={page === 1}
-          className="px-4 py-2 bg-gray-500 text-white rounded-md disabled:opacity-50"
+          className="w-full sm:w-auto px-4 py-2 bg-gray-500 text-white rounded-md disabled:opacity-50"
         >
           Previous
         </button>
@@ -198,8 +198,7 @@ export default function Exhibits() {
 
         <button
           onClick={() => handlePagination(page + 1)}
-          disabled={page === totalPages}
-          className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition"
+          className="w-full sm:w-auto px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition"
         >
           Next
         </button>
