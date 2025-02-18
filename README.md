@@ -3,6 +3,7 @@
 A web application that allows users to browse museum exhibits from Harvard Art Museums and Smithsonian Institution. This frontend interacts with a backend that fetches exhibit data from external APIs and a hosted database.
 
 Live Demo: [Museum Curator](https://museum-curator-project-lmmq.vercel.app/)
+
 User for testing - email: test@fakeemail.com, password: password
 
 Backend Repository: [Museum Curator Backend](https://github.com/ChannersSoh/museum-curator-backend)
