@@ -22,11 +22,10 @@ export default function CollectionExhibits() {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        console.log("Fetched exhibits:", response.data); // ✅ Debugging log
+        console.log("Fetched exhibits:", response.data);
 
-        // ✅ Extract exhibits and collection name properly
         setCollectionName(response.data.collection.name);
-        setExhibits(response.data.exhibits || []); // Ensure exhibits is always an array
+        setExhibits(response.data.exhibits || []); 
       } catch (err) {
         console.error("Failed to fetch collection exhibits:", err);
         setError("Failed to load exhibits. Please try again later.");
@@ -38,17 +37,22 @@ export default function CollectionExhibits() {
     fetchCollectionExhibits();
   }, [id, token]);
 
-  if (loading) return <p>Loading exhibits...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
+  if (loading) 
+    return <p className="text-center text-gray-900 dark:text-gray-100">Loading exhibits...</p>;
+  
+  if (error) 
+    return <p className="text-center text-red-500 dark:text-red-400">{error}</p>;
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">{collectionName || "Collection"} Exhibits</h1>
+    <div className="container mx-auto p-6">
+      <h1 className="text-4xl font-bold mb-6 text-gray-900 dark:text-gray-100 text-center">
+        {collectionName || "Collection"} Exhibits
+      </h1>
 
       {exhibits.length === 0 ? (
-        <p>No exhibits in this collection.</p>
+        <p className="text-gray-700 dark:text-gray-300 text-center">No exhibits in this collection.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {exhibits.map((exhibit) => (
             <Card
               key={exhibit.id}

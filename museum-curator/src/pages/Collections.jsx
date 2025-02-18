@@ -71,30 +71,25 @@ export default function Collections() {
         </button>
       </div>
 
-      {/* Collections List */}
       <ul className="space-y-4">
-        {collections.map((collection) => (
-          <li
-            key={collection.id}
-            className="p-4 border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg shadow-md hover:shadow-lg dark:hover:shadow-gray-900 transition"
-          >
-            <div className="flex justify-between items-center">
+          {collections.map((collection) => (
+            <li
+              key={collection.id}
+              className="p-4 border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center"
+            >
               <div>
-                <Link
-                  to={`/collections/${collection.id}`}
-                  className="text-blue-500 dark:text-blue-400 underline font-semibold"
-                >
+                <Link to={`/collections/${collection.id}`} className="text-blue-500 dark:text-blue-400 underline font-semibold">
                   {collection.name}
                 </Link>
                 <p className="text-gray-600 dark:text-gray-300">{collection.description}</p>
               </div>
-              <span className="bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full text-sm">
+              <span className="mt-2 sm:mt-0 bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full text-sm">
                 {collection.exhibitCount || 0} {collection.exhibitCount === 1 ? "exhibit" : "exhibits"}
               </span>
-            </div>
-          </li>
-        ))}
-      </ul>
+            </li>
+          ))}
+        </ul>
+
     </div>
   );
 }

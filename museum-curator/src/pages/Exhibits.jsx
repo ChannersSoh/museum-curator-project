@@ -11,7 +11,6 @@ export default function Exhibits() {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [inputPage, setInputPage] = useState(1);
-
   const [collection, setCollection] = useState("");
   const [culture, setCulture] = useState("");
   const [medium, setMedium] = useState("");
@@ -21,16 +20,16 @@ export default function Exhibits() {
       setLoading(true);
       setError(null);
       setExhibits([]);
-  
+
       try {
         const params = new URLSearchParams();
         params.append("page", page.toString());
         params.append("pageSize", EXHIBITS_PER_PAGE.toString());
-  
+
         if (collection.trim()) params.append("collection", collection);
         if (culture.trim()) params.append("culture", culture);
         if (medium.trim()) params.append("medium", medium);
-  
+
         const { data } = await axios.get(`${API_URL}?${params.toString()}`);
         setExhibits(data.exhibits);
       } catch {
@@ -39,7 +38,7 @@ export default function Exhibits() {
         setLoading(false);
       }
     };
-  
+
     fetchExhibits();
   }, [page, collection, culture, medium]);
 
@@ -65,15 +64,15 @@ export default function Exhibits() {
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-4xl font-bold mb-8 text-gray-900 dark:text-gray-100">
+      <h1 className="text-4xl font-bold mb-6 text-gray-900 dark:text-gray-100 text-center">
         Exhibits
       </h1>
 
-      <div className="flex flex-wrap gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
         <select
           value={collection}
           onChange={(e) => setCollection(e.target.value)}
-          className="p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md"
+          className="w-full p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md"
         >
           <option value="">Filter by Collection</option>
           <option value="Coins">Coins</option>
@@ -87,7 +86,7 @@ export default function Exhibits() {
         <select
           value={culture}
           onChange={(e) => setCulture(e.target.value)}
-          className="p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md"
+          className="w-full p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md"
         >
           <option value="">Filter by Culture</option>
           <option value="American">American</option>
@@ -103,7 +102,7 @@ export default function Exhibits() {
         <select
           value={medium}
           onChange={(e) => setMedium(e.target.value)}
-          className="p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md"
+          className="w-full p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md"
         >
           <option value="">Filter by Medium</option>
           <option value="silver">Silver</option>
@@ -120,31 +119,25 @@ export default function Exhibits() {
             setCulture("");
             setMedium("");
           }}
-          className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+          className="w-full sm:w-auto px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
         >
           Reset Filters
         </button>
       </div>
 
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array(6)
-            .fill(0)
-            .map((_, index) => (
-              <div key={index} className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4">
-                <div className="w-full h-48 bg-gray-300 dark:bg-gray-700 animate-pulse mb-4"></div>
-                <div className="w-3/4 h-5 bg-gray-300 dark:bg-gray-700 animate-pulse mb-2"></div>
-                <div className="w-1/2 h-4 bg-gray-300 dark:bg-gray-700 animate-pulse mb-2"></div>
-                <div className="w-full h-12 bg-gray-300 dark:bg-gray-700 animate-pulse mb-2"></div>
-              </div>
-            ))}
-        </div>
-      ) : (
-        <>
-          {error && <p className="text-red-500 dark:text-red-400">{error}</p>}
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {exhibits.map(({ id, title, creator, imageUrl, description, collection, culture, date }) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-center">
+        {loading
+          ? Array(6)
+              .fill(0)
+              .map((_, index) => (
+                <div key={index} className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-full max-w-sm mx-auto">
+                  <div className="w-full h-48 bg-gray-300 dark:bg-gray-700 animate-pulse mb-4"></div>
+                  <div className="w-3/4 h-5 bg-gray-300 dark:bg-gray-700 animate-pulse mb-2"></div>
+                  <div className="w-1/2 h-4 bg-gray-300 dark:bg-gray-700 animate-pulse mb-2"></div>
+                  <div className="w-full h-12 bg-gray-300 dark:bg-gray-700 animate-pulse mb-2"></div>
+                </div>
+              ))
+          : exhibits.map(({ id, title, creator, imageUrl, description, collection, culture, date }) => (
               <Card
                 key={id}
                 id={id}
@@ -157,15 +150,13 @@ export default function Exhibits() {
                 date={date}
               />
             ))}
-          </div>
-        </>
-      )}
+      </div>
 
-      <div className="flex justify-between mt-8 items-center">
+      <div className="flex flex-col sm:flex-row justify-between mt-8 items-center space-y-4 sm:space-y-0">
         <button
           onClick={() => handlePagination(page - 1)}
           disabled={page === 1}
-          className="px-4 py-2 bg-gray-500 text-white rounded-md disabled:opacity-50"
+          className="w-full sm:w-auto px-4 py-2 bg-gray-500 text-white rounded-md disabled:opacity-50"
         >
           Previous
         </button>
@@ -184,7 +175,7 @@ export default function Exhibits() {
 
         <button
           onClick={() => handlePagination(page + 1)}
-          className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition"
+          className="w-full sm:w-auto px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition"
         >
           Next
         </button>

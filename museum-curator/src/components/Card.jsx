@@ -11,7 +11,7 @@ export default function Card({ id, title, creator, imageUrl, description, collec
   }, []);
 
   return (
-    <div className="bg-white dark:bg-gray-700 shadow-md dark:shadow-lg rounded-lg overflow-hidden w-80 transition-transform transform hover:scale-105 hover:shadow-xl dark:hover:shadow-gray-900 duration-300">
+    <div className="bg-white dark:bg-gray-700 shadow-md dark:shadow-lg rounded-lg overflow-hidden w-full max-w-sm mx-auto transition-transform transform hover:scale-105 hover:shadow-xl dark:hover:shadow-gray-900 duration-300">
       <Link to={`/exhibits/${id}`}>
         <div className="relative w-full h-48">
           {!isImageLoaded && <div className="absolute inset-0 bg-gray-300 dark:bg-gray-700 animate-pulse"></div>}

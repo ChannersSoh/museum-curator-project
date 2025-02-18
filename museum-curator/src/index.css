@@ -51,6 +51,6 @@ button:hover {
 
 @media (prefers-color-scheme: dark) {
   button {
-    background-color: #333;
+    background-color: #353535;
   }
 }
