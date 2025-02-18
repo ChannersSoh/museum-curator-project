@@ -6,7 +6,9 @@ function NavLink({ to, currentPath, children }) {
     <Link
       to={to}
       className={`px-3 py-2 rounded-md text-lg transition duration-200 ${
-        currentPath === to ? "text-blue-400" : "hover:text-gray-300"
+        currentPath === to
+          ? "text-blue-500 dark:text-blue-400 font-semibold"
+          : "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
       }`}
       aria-current={currentPath === to ? "page" : undefined}
     >
@@ -28,9 +30,9 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 w-full bg-gray-900 text-white shadow-md z-50">
+    <nav className="sticky top-0 w-full bg-gray-900 dark:bg-gray-700 text-gray-100 dark:text-gray-100 shadow-md z-50">
       <div className="container mx-auto px-6 py-3 flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold tracking-wide">
+        <Link to="/" className="text-2xl font-bold tracking-wide text-gray-900 dark:text-white">
           Museum Curator
         </Link>
 
@@ -47,8 +49,11 @@ export default function Navbar() {
               <NavLink to="/collections" currentPath={location.pathname}>
                 My Collections
               </NavLink>
-              <span className="text-gray-400">Hello, {user?.username}</span>
-              <button onClick={handleLogout} className="px-3 py-2 bg-red-500 rounded-md text-black">
+              <span className="text-gray-600 dark:text-gray-400">Hello, {user?.username}</span>
+              <button
+                onClick={handleLogout}
+                className="px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+              >
                 Logout
               </button>
             </>
