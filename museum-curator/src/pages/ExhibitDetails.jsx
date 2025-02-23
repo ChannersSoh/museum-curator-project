@@ -45,7 +45,7 @@ export default function ExhibitDetails() {
 
   const handleAddToCollection = async () => {
     if (!selectedCollection) return alert("Select a collection first!");
-
+  
     try {
       await axios.post(
         `${API_URL}/collections/save`,
@@ -54,6 +54,15 @@ export default function ExhibitDetails() {
           exhibitId: exhibit.id,
           title: exhibit.title,
           institution: exhibit.institution,
+          imageUrl: exhibit.imageUrl,
+          creator: exhibit.creator,
+          date: exhibit.date,
+          collection: exhibit.collection,
+          culture: exhibit.culture,
+          medium: exhibit.medium,
+          styleOrPeriod: exhibit.styleOrPeriod,
+          locationCreated: exhibit.locationCreated,
+          description: exhibit.description,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -63,7 +72,7 @@ export default function ExhibitDetails() {
       alert("Failed to add exhibit.");
     }
   };
-
+  
   const handleRemoveFromCollection = async () => {
     if (!selectedCollection) return alert("Select a collection first!");
 
