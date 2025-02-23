@@ -11,6 +11,7 @@ export default function ExhibitDetails() {
   const [selectedCollection, setSelectedCollection] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [notification, setNotification] = useState(null);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -43,8 +44,15 @@ export default function ExhibitDetails() {
     fetchCollections();
   }, [id, token]);
 
+  const showNotification = (message, type = "success") => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
+  };
+
   const handleAddToCollection = async () => {
-    if (!selectedCollection) return alert("Select a collection first!");
+    if (!selectedCollection) return showNotification("Select a collection first!", "error");
   
     try {
       await axios.post(
@@ -66,25 +74,25 @@ export default function ExhibitDetails() {
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert("Exhibit added successfully!");
+      showNotification("Exhibit added successfully!", "success");
     } catch (err) {
       console.error("Error adding exhibit:", err);
-      alert("Failed to add exhibit.");
+      showNotification("Failed to add exhibit.", "error");
     }
   };
   
   const handleRemoveFromCollection = async () => {
-    if (!selectedCollection) return alert("Select a collection first!");
+    if (!selectedCollection) return showNotification("Select a collection first!", "error");
 
     try {
       await axios.delete(`${API_URL}/collections/exhibits`, {
         headers: { Authorization: `Bearer ${token}` },
         data: { collectionId: selectedCollection, exhibitId: exhibit.id },
       });
-      alert("Exhibit removed successfully!");
+      showNotification("Exhibit removed successfully!", "success");
     } catch (err) {
       console.error("Error removing exhibit:", err);
-      alert("Failed to remove exhibit.");
+      showNotification("Failed to remove exhibit.", "error");
     }
   };
 
@@ -114,6 +122,17 @@ export default function ExhibitDetails() {
 
   return (
     <div className="container mx-auto p-6">
+      {notification && (
+        <div
+          className={`mb-4 p-4 rounded-md text-center ${
+            notification.type === "success"
+              ? "bg-green-100 text-green-900"
+              : "bg-red-200 text-red-900"
+          }`}
+        >
+          {notification.message}
+        </div>
+      )}
       <h1 className="text-4xl font-bold mb-6 text-gray-900 dark:text-gray-100 text-center">
         {exhibit.title}
       </h1>
@@ -124,17 +143,34 @@ export default function ExhibitDetails() {
           className="w-full h-96 object-cover rounded-lg shadow-md"
         />
         <div>
-          <p className="text-gray-900 dark:text-gray-100"><strong>Creator:</strong> {exhibit.creator}</p>
-          <p className="text-gray-700 dark:text-gray-300"><strong>Collection:</strong> {exhibit.collection}</p>
-          <p className="text-gray-700 dark:text-gray-300"><strong>Date Created:</strong> {exhibit.date}</p>
-          <p className="text-gray-700 dark:text-gray-300"><strong>Medium:</strong> {exhibit.medium}</p>
-          <p className="text-gray-700 dark:text-gray-300"><strong>Culture:</strong> {exhibit.culture}</p>
-          <p className="text-gray-700 dark:text-gray-300"><strong>Period:</strong> {exhibit.styleOrPeriod}</p>
-          <p className="text-gray-700 dark:text-gray-300"><strong>Description:</strong> {exhibit.description || "No description available"}</p>
+          <p className="text-gray-900 dark:text-gray-100">
+            <strong>Creator:</strong> {exhibit.creator}
+          </p>
+          <p className="text-gray-700 dark:text-gray-300">
+            <strong>Collection:</strong> {exhibit.collection}
+          </p>
+          <p className="text-gray-700 dark:text-gray-300">
+            <strong>Date Created:</strong> {exhibit.date}
+          </p>
+          <p className="text-gray-700 dark:text-gray-300">
+            <strong>Medium:</strong> {exhibit.medium}
+          </p>
+          <p className="text-gray-700 dark:text-gray-300">
+            <strong>Culture:</strong> {exhibit.culture}
+          </p>
+          <p className="text-gray-700 dark:text-gray-300">
+            <strong>Period:</strong> {exhibit.styleOrPeriod}
+          </p>
+          <p className="text-gray-700 dark:text-gray-300">
+            <strong>Description:</strong>{" "}
+            {exhibit.description || "No description available"}
+          </p>
 
           {token && (
             <div className="mt-6">
-              <label className="block text-gray-900 dark:text-gray-100 mb-2">Add to Collection:</label>
+              <label className="block text-gray-900 dark:text-gray-100 mb-2">
+                Add to Collection:
+              </label>
               <select
                 value={selectedCollection}
                 onChange={(e) => setSelectedCollection(e.target.value)}
@@ -148,14 +184,14 @@ export default function ExhibitDetails() {
                 ))}
               </select>
               <div className="mt-4 flex flex-wrap gap-2">
-                <button 
-                  onClick={handleAddToCollection} 
+                <button
+                  onClick={handleAddToCollection}
                   className="px-4 py-2 bg-green-500 dark:bg-green-600 text-white rounded-md hover:bg-green-600 dark:hover:bg-green-700 transition"
                 >
                   Add to Collection
                 </button>
-                <button 
-                  onClick={handleRemoveFromCollection} 
+                <button
+                  onClick={handleRemoveFromCollection}
                   className="px-4 py-2 bg-red-500 dark:bg-red-600 text-white rounded-md hover:bg-red-600 dark:hover:bg-red-700 transition"
                 >
                   Remove from Collection
