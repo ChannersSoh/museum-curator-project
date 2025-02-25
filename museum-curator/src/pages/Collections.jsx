@@ -42,6 +42,18 @@ export default function Collections() {
     }
   };
 
+  const deleteCollection = async (id) => {
+    if (!token) return;
+    try {
+      await axios.delete(`${API_URL}/collections/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setCollections(collections.filter((col) => col.id !== id));
+    } catch (err) {
+      console.error("Failed to delete collection:", err);
+    }
+  };
+
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-4xl font-bold mb-6 text-gray-900 dark:text-gray-100">
@@ -73,21 +85,37 @@ export default function Collections() {
 
       <ul className="space-y-4">
         {collections.map((collection) => (
-          <Link key={collection.id} to={`/collections/${collection.id}`} className="block">
-            <li
-              className="p-4 border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 
-              rounded-lg shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center 
-              hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
-            >
+          <li
+            key={collection.id}
+            className="p-4 border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg shadow-md flex justify-between items-center hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
+          >
+            <Link to={`/collections/${collection.id}`} className="flex-1">
               <div>
-                <p className="text-lg font-semibold text-gray-600 dark:text-gray-300">{collection.name}</p>
-                <p className="text-gray-600 dark:text-gray-300">{collection.description}</p>
+                <p className="text-lg font-semibold text-gray-600 dark:text-gray-300">
+                  {collection.name}
+                </p>
+                <p className="text-gray-600 dark:text-gray-300">
+                  {collection.description}
+                </p>
               </div>
-              <span className="mt-2 sm:mt-0 bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full text-sm">
-                {collection.exhibitCount || 0} {collection.exhibitCount === 1 ? "exhibit" : "exhibits"}
+            </Link>
+            <div className="flex items-center gap-2">
+              <span className="bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full text-sm">
+                {collection.exhibitCount || 0}{" "}
+                {collection.exhibitCount === 1 ? "exhibit" : "exhibits"}
               </span>
-            </li>
-          </Link>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  deleteCollection(collection.id);
+                }}
+                className="bg-red-500 hover:bg-red-600 text-white text-xs font-bold py-1 px-2 rounded"
+              >
+                Delete
+              </button>
+            </div>
+          </li>
         ))}
       </ul>
     </div>
