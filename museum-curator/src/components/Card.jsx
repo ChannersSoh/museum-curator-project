@@ -35,9 +35,9 @@ export default function Card({ id, title, creator, imageUrl, description, collec
             </div>
           ) : (
             <div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{title}</h3>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 line-clamp-2">{title}</h3>
               <p className="text-gray-600 dark:text-gray-300">By {creator || "Unknown"}</p>
-              <p className="text-gray-700 dark:text-gray-400 mt-2 text-sm">
+              <p className="text-gray-700 dark:text-gray-400 mt-2 text-sm line-clamp-2">
                 {description || "No description available"}
               </p>
               <div className="text-gray-600 dark:text-gray-400 text-xs mt-3">
