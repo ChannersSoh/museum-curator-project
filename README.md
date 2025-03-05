@@ -74,5 +74,6 @@ npm install
 npm start
 ```
 
+For more details about the backend implementation, please check out the [Museum Curator Backend](https://github.com/ChannersSoh/museum-curator-backend) repository. 
 
 
