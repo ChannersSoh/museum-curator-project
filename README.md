@@ -58,8 +58,7 @@ An Express server that connects to a PostgreSQL database and integrates with ext
 
 ### Clone the Repository
 
-```bash
-git clone https://github.com/your-username/museum-curator-project.git
-cd museum-curator-project/museum-curator
+>git clone https://github.com/your-username/museum-curator-project.git
+>cd museum-curator-project/museum-curator
 
-For more details about the backend implementation, please check out the Museum Curator Backend repository.
+
