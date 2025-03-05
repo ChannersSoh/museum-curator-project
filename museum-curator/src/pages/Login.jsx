@@ -8,11 +8,13 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(null);
+    setIsLoading(true); 
 
     try {
       const response = await axios.post(`${API_URL}/login`, { email, password });
@@ -21,6 +23,8 @@ export default function Login() {
       navigate("/collections"); 
     } catch (err) {
       setError("Invalid credentials. Please try again.");
+    } finally {
+      setIsLoading(false); 
     }
   };
 
@@ -45,8 +49,12 @@ export default function Login() {
           className="w-full p-2 border border-gray-300 rounded"
           required
         />
-        <button type="submit" className="w-full bg-blue-500 text-black p-2 rounded">
-          Login
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-black p-2 rounded"
+          disabled={isLoading} 
+        >
+          {isLoading ? "Loading..." : "Login"}
         </button>
       </form>
     </div>
