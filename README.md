@@ -61,9 +61,18 @@ An Express server that connects to a PostgreSQL database and integrates with ext
 ```bash
 git clone https://github.com/your-username/museum-curator-project.git
 cd museum-curator-project/museum-curator
+```
 
 ### Install Dependecies
 
 ```bash
 npm install
+```
+
+### Start the Development Server
+```bash
+npm start
+```
+
+
 
