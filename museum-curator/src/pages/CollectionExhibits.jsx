@@ -22,10 +22,8 @@ export default function CollectionExhibits() {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        console.log("Fetched exhibits:", response.data);
-
-        setCollectionName(response.data.collection.name);
-        setExhibits(response.data.exhibits || []); 
+        setCollectionName(response.data.collection ? response.data.collection.name : "Empty Collection");
+        setExhibits(response.data.exhibits || []);
       } catch (err) {
         console.error("Failed to fetch collection exhibits:", err);
         setError("Failed to load exhibits. Please try again later.");
@@ -47,7 +45,9 @@ export default function CollectionExhibits() {
       </h1>
 
       {exhibits.length === 0 ? (
-        <p className="text-gray-700 dark:text-gray-300 text-center">No exhibits in this collection.</p>
+        <p className="text-2xl font-semibold text-center py-4 text-gray-900 dark:text-gray-100 rounded">
+          No exhibits in this collection.
+        </p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {exhibits.map((exhibit) => (

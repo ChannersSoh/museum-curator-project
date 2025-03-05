@@ -92,7 +92,7 @@ export default function ExhibitDetails() {
       showNotification("Exhibit removed successfully!", "success");
     } catch (err) {
       console.error("Error removing exhibit:", err);
-      showNotification("Failed to remove exhibit.", "error");
+      showNotification("Exhibit not found in collection", "error");
     }
   };
 

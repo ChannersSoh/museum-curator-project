@@ -49,11 +49,8 @@ export default function Exhibits() {
         if (searchQuery.trim()) params.append("query", searchQuery);
 
         const url = `${API_URL}?${params.toString()}`;
-        console.log("Fetching exhibits from:", url);
 
         const { data } = await axios.get(url, { signal: controller.signal });
-        console.log("Received response data for fetchId", fetchId, ":", data);
-
         if (isCurrent && fetchId === latestFetchId.current) {
           setExhibits(data.exhibits);
           setCurrentFetchId(fetchId);
@@ -81,13 +78,11 @@ export default function Exhibits() {
     return () => {
       isCurrent = false;
       controller.abort();
-      console.log("Cleanup: Aborted fetchExhibits for fetchId:", fetchId);
     };
   }, [page, collection, culture, medium, searchQuery]);
 
   const handlePagination = (newPage) => {
     if (newPage > 0) {
-      console.log("Paginating to page:", newPage);
       setPage(newPage);
       setInputPage(newPage);
     }
@@ -100,7 +95,6 @@ export default function Exhibits() {
   const handlePageInputSubmit = () => {
     const pageNum = Number(inputPage);
     if (pageNum > 0) {
-      console.log("Page input submitted, page:", pageNum);
       setPage(pageNum);
     } else {
       setInputPage(page);
@@ -108,7 +102,6 @@ export default function Exhibits() {
   };
 
   const handleResetFilters = () => {
-    console.log("Resetting filters");
     setCollection("");
     setCulture("");
     setMedium("");
