@@ -50,8 +50,8 @@ An Express server that connects to a PostgreSQL database and integrates with ext
 
 ## Tech Stack
 
-- **Frontend:** React, Tailwind CSS, React Router
-- **Backend:** Express, PostgreSQL, External APIs (Harvard Art Museums & Smithsonian Institution)
+- **Frontend:** JavaScript, React, Tailwind CSS, React Router
+- **Backend:** TypeScript, Express, PostgreSQL, External APIs (Harvard Art Museums & Smithsonian Institution)
 - **Hosting:** Vercel (Frontend), Render (Backend)
 
 ## Installation & Setup
