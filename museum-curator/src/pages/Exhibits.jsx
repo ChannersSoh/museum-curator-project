@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { ChevronDown, ChevronUp } from "lucide-react"; 
 import Card from "../components/Card";
@@ -8,6 +8,7 @@ const EXHIBITS_PER_PAGE = 20;
 
 export default function Exhibits() {
   const [exhibits, setExhibits] = useState([]);
+  const [currentFetchId, setCurrentFetchId] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
@@ -15,37 +16,78 @@ export default function Exhibits() {
   const [collection, setCollection] = useState("");
   const [culture, setCulture] = useState("");
   const [medium, setMedium] = useState("");
-  const [filtersVisible, setFiltersVisible] = useState(false); 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filtersVisible, setFiltersVisible] = useState(false);
+
+  const latestFetchId = useRef(0);
 
   useEffect(() => {
-    const fetchExhibits = async (pageNum, collectionFilter, cultureFilter, mediumFilter) => {
+    console.log("Filters or searchQuery changed. Resetting page and exhibits.");
+    setPage(1);
+    setInputPage(1);
+    setExhibits([]);
+  }, [searchQuery, collection, culture, medium]);
+
+  useEffect(() => {
+    let isCurrent = true; 
+    const controller = new AbortController();
+    latestFetchId.current += 1;
+    const fetchId = latestFetchId.current;
+    console.log("Starting fetchExhibits with fetchId:", fetchId);
+
+    const fetchExhibits = async () => {
       setLoading(true);
       setError(null);
-      setExhibits([]);
-    
+      
       try {
         const params = new URLSearchParams();
-        params.append("page", pageNum.toString());
+        params.append("page", page.toString());
         params.append("pageSize", EXHIBITS_PER_PAGE.toString());
-    
-        if (collectionFilter.trim()) params.append("collection", collectionFilter);
-        if (cultureFilter.trim()) params.append("culture", cultureFilter);
-        if (mediumFilter.trim()) params.append("medium", mediumFilter);
-    
-        const { data } = await axios.get(`${API_URL}?${params.toString()}`);
-        setExhibits(data.exhibits);
-      } catch {
-        setError("Failed to fetch exhibits");
+        if (collection.trim()) params.append("collection", collection);
+        if (culture.trim()) params.append("culture", culture);
+        if (medium.trim()) params.append("medium", medium);
+        if (searchQuery.trim()) params.append("query", searchQuery);
+
+        const url = `${API_URL}?${params.toString()}`;
+        console.log("Fetching exhibits from:", url);
+
+        const { data } = await axios.get(url, { signal: controller.signal });
+        console.log("Received response data for fetchId", fetchId, ":", data);
+
+        if (isCurrent && fetchId === latestFetchId.current) {
+          setExhibits(data.exhibits);
+          setCurrentFetchId(fetchId);
+          console.log("Exhibits state updated for fetchId", fetchId, ":", data.exhibits);
+        } else {
+          console.log("Ignoring response for stale fetchId:", fetchId);
+        }
+      } catch (err) {
+        if (!axios.isCancel(err)) {
+          setError("Failed to fetch exhibits");
+          console.error("Error fetching exhibits:", err);
+        } else {
+          console.log("Fetch cancelled for fetchId:", fetchId);
+        }
       } finally {
-        setLoading(false);
+        if (isCurrent && fetchId === latestFetchId.current) {
+          setLoading(false);
+          console.log("Loading set to false for fetchId:", fetchId);
+        }
       }
     };
 
-    fetchExhibits(page, collection, culture, medium);
-  }, [page, collection, culture, medium]);
+    fetchExhibits();
+
+    return () => {
+      isCurrent = false;
+      controller.abort();
+      console.log("Cleanup: Aborted fetchExhibits for fetchId:", fetchId);
+    };
+  }, [page, collection, culture, medium, searchQuery]);
 
   const handlePagination = (newPage) => {
     if (newPage > 0) {
+      console.log("Paginating to page:", newPage);
       setPage(newPage);
       setInputPage(newPage);
     }
@@ -58,6 +100,7 @@ export default function Exhibits() {
   const handlePageInputSubmit = () => {
     const pageNum = Number(inputPage);
     if (pageNum > 0) {
+      console.log("Page input submitted, page:", pageNum);
       setPage(pageNum);
     } else {
       setInputPage(page);
@@ -65,17 +108,14 @@ export default function Exhibits() {
   };
 
   const handleResetFilters = () => {
+    console.log("Resetting filters");
     setCollection("");
     setCulture("");
     setMedium("");
+    setSearchQuery("");
     setPage(1);
-    setExhibits([]); 
-    setTimeout(() => {
-      fetchExhibits(1, "", "", "");
-    }, 0);
+    setExhibits([]);
   };
-  
-  
 
   return (
     <div className="container mx-auto p-6">
@@ -83,8 +123,33 @@ export default function Exhibits() {
         Exhibits
       </h1>
 
+      <div className="flex justify-center mb-4">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => {
+            console.log("Search query changed:", e.target.value);
+            setSearchQuery(e.target.value);
+          }}
+          placeholder="Search exhibits..."
+          className="p-2 border border-gray-300 dark:border-gray-600 rounded-md w-full max-w-md"
+        />
+        <button
+          onClick={() => {
+            console.log("Search button clicked, resetting page to 1");
+            setPage(1);
+          }}
+          className="px-4 py-2 ml-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+        >
+          Search
+        </button>
+      </div>
+
       <button
-        onClick={() => setFiltersVisible(!filtersVisible)}
+        onClick={() => {
+          console.log("Toggling filters. New state:", !filtersVisible);
+          setFiltersVisible(!filtersVisible);
+        }}
         className="flex items-center justify-center gap-2 bg-gray-900 text-gray-100 px-4 py-2 rounded-md w-full sm:w-auto mb-4"
       >
         {filtersVisible ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
@@ -95,7 +160,10 @@ export default function Exhibits() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6 transition-all duration-300">
           <select
             value={collection}
-            onChange={(e) => setCollection(e.target.value)}
+            onChange={(e) => {
+              console.log("Collection changed:", e.target.value);
+              setCollection(e.target.value);
+            }}
             className="w-full p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md"
           >
             <option value="">Filter by Collection</option>
@@ -109,7 +177,10 @@ export default function Exhibits() {
 
           <select
             value={culture}
-            onChange={(e) => setCulture(e.target.value)}
+            onChange={(e) => {
+              console.log("Culture changed:", e.target.value);
+              setCulture(e.target.value);
+            }}
             className="w-full p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md"
           >
             <option value="">Filter by Culture</option>
@@ -125,7 +196,10 @@ export default function Exhibits() {
 
           <select
             value={medium}
-            onChange={(e) => setMedium(e.target.value)}
+            onChange={(e) => {
+              console.log("Medium changed:", e.target.value);
+              setMedium(e.target.value);
+            }}
             className="w-full p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md"
           >
             <option value="">Filter by Medium</option>
@@ -138,41 +212,55 @@ export default function Exhibits() {
           </select>
 
           <div className="col-span-1 sm:col-span-3 flex justify-center">
-          <button
+            <button
               onClick={handleResetFilters}
-              className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition">
+              className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+            >
               Reset Filters
-          </button>
-
+            </button>
           </div>
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-center">
+      <div key={currentFetchId} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-center">
         {loading
           ? Array(6)
               .fill(0)
               .map((_, index) => (
-                <div key={index} className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-full max-w-sm mx-auto">
+                <div
+                  key={index}
+                  className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-full max-w-sm mx-auto"
+                >
                   <div className="w-full h-48 bg-gray-300 dark:bg-gray-700 animate-pulse mb-4"></div>
                   <div className="w-3/4 h-5 bg-gray-300 dark:bg-gray-700 animate-pulse mb-2"></div>
                   <div className="w-1/2 h-4 bg-gray-300 dark:bg-gray-700 animate-pulse mb-2"></div>
                   <div className="w-full h-12 bg-gray-300 dark:bg-gray-700 animate-pulse mb-2"></div>
                 </div>
               ))
-          : exhibits.map(({ id, title, creator, imageUrl, description, collection, culture, date }) => (
-              <Card
-                key={id}
-                id={id}
-                title={title}
-                creator={creator}
-                imageUrl={imageUrl}
-                description={description || "No description available"}
-                collection={collection}
-                culture={culture}
-                date={date}
-              />
-            ))}
+          : exhibits.map(
+              ({
+                id,
+                title,
+                creator,
+                imageUrl,
+                description,
+                collection,
+                culture,
+                date,
+              }) => (
+                <Card
+                  key={id}
+                  id={id}
+                  title={title}
+                  creator={creator}
+                  imageUrl={imageUrl}
+                  description={description || "No description available"}
+                  collection={collection}
+                  culture={culture}
+                  date={date}
+                />
+              )
+            )}
       </div>
 
       <div className="flex flex-col sm:flex-row justify-between mt-8 items-center space-y-4 sm:space-y-0">
