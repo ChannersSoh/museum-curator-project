@@ -6,7 +6,7 @@ import Card from "../components/Card";
 const API_URL = "https://museum-curator-backend.onrender.com";
 
 export default function CollectionExhibits() {
-  const { id } = useParams();
+  const { id } = useParams(); 
   const [exhibits, setExhibits] = useState([]);
   const [collectionName, setCollectionName] = useState("");
   const [loading, setLoading] = useState(true);
@@ -18,11 +18,18 @@ export default function CollectionExhibits() {
 
     const fetchCollectionExhibits = async () => {
       try {
-        const response = await axios.get(`${API_URL}/collections/${id}/exhibits`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.get(
+          `${API_URL}/collections/${id}/exhibits`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
-        setCollectionName(response.data.collection ? response.data.collection.name : "Empty Collection");
+        setCollectionName(
+          response.data.collection
+            ? response.data.collection.name
+            : "Empty Collection"
+        );
         setExhibits(response.data.exhibits || []);
       } catch (err) {
         console.error("Failed to fetch collection exhibits:", err);
@@ -34,9 +41,27 @@ export default function CollectionExhibits() {
 
     fetchCollectionExhibits();
   }, [id, token]);
-  
-  if (error) 
-    return <p className="text-center text-red-500 dark:text-red-400">{error}</p>;
+
+  const handleDeleteExhibit = async (exhibitId) => {
+    try {
+      await axios.delete(`${API_URL}/collections/exhibits`, {
+        headers: { Authorization: `Bearer ${token}` },
+        data: { collectionId: id, exhibitId: exhibitId },
+      });
+      setExhibits((prevExhibits) =>
+        prevExhibits.filter(
+          (exhibit) => exhibit.id !== exhibitId && exhibit._id !== exhibitId
+        )
+      );
+    } catch (err) {
+      console.error("Failed to delete exhibit:", err);
+    }
+  };
+
+  if (error)
+    return (
+      <p className="text-center text-red-500 dark:text-red-400">{error}</p>
+    );
 
   return (
     <div className="container mx-auto p-6">
@@ -44,7 +69,9 @@ export default function CollectionExhibits() {
         {collectionName}
       </h1>
 
-      {exhibits.length === 0 ? (
+      {loading ? (
+        <p className="text-center">Loading exhibits...</p>
+      ) : exhibits.length === 0 ? (
         <p className="text-2xl font-semibold text-center py-4 text-gray-900 dark:text-gray-100 rounded">
           No exhibits in this collection.
         </p>
@@ -52,15 +79,20 @@ export default function CollectionExhibits() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {exhibits.map((exhibit) => (
             <Card
-              key={exhibit.id}
-              id={exhibit.id}
+              key={exhibit.id || exhibit._id}
+              id={exhibit.id || exhibit._id}
               title={exhibit.title}
               creator={exhibit.creator || "Unknown"}
-              imageUrl={exhibit.imageUrl || exhibit.image_url || "https://via.placeholder.com/150"}
+              imageUrl={
+                exhibit.imageUrl ||
+                exhibit.image_url ||
+                "https://via.placeholder.com/150"
+              }
               description={exhibit.description || "No description available"}
               collection={exhibit.collection}
               culture={exhibit.culture}
               date={exhibit.date}
+              onDelete={() => handleDeleteExhibit(exhibit.id || exhibit._id)}
             />
           ))}
         </div>

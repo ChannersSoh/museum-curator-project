@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-export default function Card({ id, title, creator, imageUrl, description, collection, culture, date }) {
+export default function Card({
+  id,
+  title,
+  creator,
+  imageUrl,
+  description,
+  collection,
+  culture,
+  date,
+  onDelete,
+}) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
@@ -14,7 +24,9 @@ export default function Card({ id, title, creator, imageUrl, description, collec
     <div className="bg-white dark:bg-gray-700 shadow-md dark:shadow-lg rounded-lg overflow-hidden w-full max-w-sm mx-auto transition-transform transform hover:scale-105 hover:shadow-xl dark:hover:shadow-gray-900 duration-300">
       <Link to={`/exhibits/${id}`}>
         <div className="relative w-full h-48">
-          {!isImageLoaded && <div className="absolute inset-0 bg-gray-300 dark:bg-gray-700 animate-pulse"></div>}
+          {!isImageLoaded && (
+            <div className="absolute inset-0 bg-gray-300 dark:bg-gray-700 animate-pulse"></div>
+          )}
           <img
             src={imageUrl || "https://via.placeholder.com/300"}
             alt={title}
@@ -35,20 +47,43 @@ export default function Card({ id, title, creator, imageUrl, description, collec
             </div>
           ) : (
             <div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 line-clamp-2">{title}</h3>
-              <p className="text-gray-600 dark:text-gray-300">By {creator || "Unknown"}</p>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 line-clamp-2">
+                {title}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                By {creator || "Unknown"}
+              </p>
               <p className="text-gray-700 dark:text-gray-400 mt-2 text-sm line-clamp-2">
                 {description || "No description available"}
               </p>
               <div className="text-gray-600 dark:text-gray-400 text-xs mt-3">
-                <p><strong>Collection:</strong> {collection}</p>
-                <p><strong>Culture:</strong> {culture}</p>
-                <p><strong>Date:</strong> {date || "Unknown"}</p>
+                <p>
+                  <strong>Collection:</strong> {collection}
+                </p>
+                <p>
+                  <strong>Culture:</strong> {culture}
+                </p>
+                <p>
+                  <strong>Date:</strong> {date || "Unknown"}
+                </p>
               </div>
             </div>
           )}
         </div>
       </Link>
+
+      {onDelete && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            onDelete();
+          }}
+          className="mt-2 mx-4 mb-4 px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Delete
+        </button>
+      )}
     </div>
   );
 }
