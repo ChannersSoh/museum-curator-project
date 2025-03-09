@@ -66,6 +66,7 @@ export default function Collections() {
           placeholder="Collection Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          aria-label="Collection Name"
           className="p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md"
         />
         <input
@@ -73,6 +74,7 @@ export default function Collections() {
           placeholder="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          aria-label="Description"
           className="p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md"
         />
         <button
@@ -110,6 +112,7 @@ export default function Collections() {
                   e.stopPropagation();
                   deleteCollection(collection.id);
                 }}
+                aria-label={`Delete collection ${collection.name}`}
                 className="bg-red-500 hover:bg-red-600 text-white text-xs font-bold py-1 px-2 rounded"
               >
                 Delete

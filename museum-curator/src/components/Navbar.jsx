@@ -54,6 +54,8 @@ export default function Navbar() {
         <button
           className="lg:hidden text-gray-100 dark:text-white focus:outline-none"
           onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle navigation menu"
+          aria-expanded={menuOpen}
         >
           {menuOpen ? <X size={28} /> : <Menu size={28} />}
         </button>

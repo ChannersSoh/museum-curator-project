@@ -125,6 +125,7 @@ export default function Exhibits() {
             setSearchQuery(e.target.value);
           }}
           placeholder="Search exhibits..."
+          aria-label="Search exhibits"
           className="p-2 border border-gray-300 dark:border-gray-600 rounded-md w-full max-w-md"
         />
         <button
@@ -143,6 +144,9 @@ export default function Exhibits() {
           console.log("Toggling filters. New state:", !filtersVisible);
           setFiltersVisible(!filtersVisible);
         }}
+        aria-label={filtersVisible ? "Hide filters" : "Show filters"}
+        aria-expanded={filtersVisible}
+        aria-controls="filters-panel"
         className="flex items-center justify-center gap-2 bg-gray-900 text-gray-100 px-4 py-2 rounded-md w-full sm:w-auto mb-4"
       >
         {filtersVisible ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
@@ -150,13 +154,17 @@ export default function Exhibits() {
       </button>
 
       {filtersVisible && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6 transition-all duration-300">
+        <div
+          id="filters-panel"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6 transition-all duration-300"
+        >
           <select
             value={collection}
             onChange={(e) => {
               console.log("Collection changed:", e.target.value);
               setCollection(e.target.value);
             }}
+            aria-label="Filter by Collection"
             className="w-full p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md"
           >
             <option value="">Filter by Collection</option>
@@ -174,6 +182,7 @@ export default function Exhibits() {
               console.log("Culture changed:", e.target.value);
               setCulture(e.target.value);
             }}
+            aria-label="Filter by Culture"
             className="w-full p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md"
           >
             <option value="">Filter by Culture</option>
@@ -193,6 +202,7 @@ export default function Exhibits() {
               console.log("Medium changed:", e.target.value);
               setMedium(e.target.value);
             }}
+            aria-label="Filter by Medium"
             className="w-full p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md"
           >
             <option value="">Filter by Medium</option>
@@ -273,6 +283,7 @@ export default function Exhibits() {
             onChange={handlePageInputChange}
             onBlur={handlePageInputSubmit}
             onKeyDown={(e) => e.key === "Enter" && handlePageInputSubmit()}
+            aria-label="Page number"
             className="w-16 text-center p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md"
           />
         </div>
